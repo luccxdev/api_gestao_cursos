@@ -46,5 +46,14 @@ def atualizar_curso(id):
             curso['instrutor'] = dados.get('instrutor', curso['instrutor'])
             return jsonify(curso), 200
     return jsonify({"erro": "Curso não encontrado"}), 404
+
+# Rota DELETE - Deletar curso
+@app.route('/cursos/<int:id>', methods=['DELETE'])
+def deletar_curso(id):
+    for i, curso in enumerate(cursos):
+        if curso['id'] == id:
+            deletado = cursos.pop(i)
+            return jsonify({"mensagem": "Curso deletado", "curso": deletado}), 200
+    return jsonify({"erro": "Curso não encontrado"}), 404
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
