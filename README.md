@@ -9,12 +9,13 @@ API REST desenvolvida com **Flask** para gestão de cursos com operações CRUD 
 ```
 .
 ├── app.py              # Aplicação principal
-├── db.py               # Banco de dados em memória
 ├── requirements.txt    # Dependências
-├── blueprints/        # Blueprints da API
-│   └── curso.py       # Endpoints de cursos
-└── schemas/           # Validação de dados
-    └── curso.py       # Schema do curso
+├── recursos/           # Recursos da API (flask-smorest)
+│   ├── __init__.py
+│   └── curso.py        # Endpoints de cursos
+└── schemas/            # Validação de dados com Marshmallow
+    ├── __init__.py
+    └── curso.py        # Schema do curso
 ```
 
 ## Instalação
