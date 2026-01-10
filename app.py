@@ -1,22 +1,25 @@
-from flask import Flask
-from flask_restx import Api
-from recursos.curso import api as ns_curso
+from flask import Flask, jsonify, request
+from blueprints.curso import curso_bp
 
 app = Flask(__name__)
-app.config['RESTX_MASK_SWAGGER'] = False
-app.config['JSON_SORT_KEYS'] = False
 
-api = Api(
-    app,
-    version='1.0',
-    title='API de Gestão de Cursos',
-    description='API RESTful para gerenciar cursos com Blueprints, OpenAPI e Schemas',
-    doc='/docs',
-    prefix='/api/v1'
-)
+# Registrar blueprint
+app.register_blueprint(curso_bp)
 
-# Registrar namespaces (blueprints)
-api.add_namespace(ns_curso)
+# Rota raiz para documentação
+@app.route('/', methods=['GET'])
+def documentacao():
+    return jsonify({
+        "titulo": "API de Gestão de Cursos",
+        "versao": "2.0",
+        "endpoints": {
+            "GET /cursos": "Listar todos os cursos",
+            "POST /cursos": "Criar novo curso",
+            "GET /cursos/<id>": "Obter curso por ID",
+            "PUT /cursos/<id>": "Atualizar curso",
+            "DELETE /cursos/<id>": "Deletar curso"
+        }
+    })
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
