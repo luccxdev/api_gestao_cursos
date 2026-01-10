@@ -1,66 +1,49 @@
-from flask_restx import Namespace, Resource, fields
+from flask.views import MethodView
+from flask_smorest import Blueprint, abort
 from marshmallow import ValidationError
+
 from schemas.curso import CursoSchema, CursoSchemaUpdate
-from db import cursos
-import uuid
+# Dicionário para armazenar os cursos (em memória)
+cursos = {}
+blp = Blueprint('cursos', __name__, description='Operações relacionadas a cursos')
 
-api = Namespace('cursos', description='Operações relacionadas a cursos')
-
-# Model para documentação Swagger
-curso_model = api.model('Curso', {
-    'id': fields.Integer(description='ID do curso'),
-    'nome': fields.String(required=True, description='Nome do curso'),
-    'descricao': fields.String(description='Descrição do curso'),
-    'carga_horaria': fields.Integer(required=True, description='Carga horária do curso')
-})
-
-schema = CursoSchema()
-schema_update = CursoSchemaUpdate()
-
-@api.route('')
-class ListaCursos(Resource):
-    @api.marshal_with(curso_model)
+@blp.route('/')
+class ListaCursos(MethodView):
+    @blp.response(200, CursoSchema(many=True))
     def get(self):
         """Lista todos os cursos"""
-        return list(cursos.values()), 200
-    
-    @api.expect(curso_model)
-    @api.marshal_with(curso_model, code=201)
-    def post(self):
-        """Cria um novo curso"""
-        try:
-            dados_validados = schema.load(api.payload)
-            novo_curso = {**dados_validados, "id": len(cursos) + 1}
-            cursos[novo_curso['id']] = novo_curso
-            return novo_curso, 201
-        except ValidationError as e:
-            api.abort(400, str(e.messages))
+        return list(cursos.values())
 
-@api.route('/<int:id_curso>')
-class RecursoCurso(Resource):
-    @api.marshal_with(curso_model)
-    def get(self, id_curso):
+    @blp.arguments(CursoSchema)
+    @blp.response(201, CursoSchema)
+    def post(self, novo_curso):
+        """Cria um novo curso"""
+        novo_id = max(cursos.keys(), default=0) + 1
+        novo_curso['id'] = novo_id
+        cursos[novo_id] = novo_curso
+        return novo_curso
+
+@blp.route('/<int:curso_id>')
+class DetalheCurso(MethodView):
+    @blp.response(200, CursoSchema)
+    def get(self, curso_id):
         """Obtém um curso por ID"""
-        if id_curso not in cursos:
-            api.abort(404, f'Curso {id_curso} não encontrado')
-        return cursos[id_curso], 200
-    
-    @api.expect(curso_model)
-    @api.marshal_with(curso_model)
-    def put(self, id_curso):
+        if curso_id not in cursos:
+            abort(404, message=f'Curso {curso_id} não encontrado')
+        return cursos[curso_id]
+
+    @blp.arguments(CursoSchemaUpdate)
+    @blp.response(200, CursoSchema)
+    def put(self, dados_atualizacao, curso_id):
         """Atualiza um curso"""
-        if id_curso not in cursos:
-            api.abort(404, f'Curso {id_curso} não encontrado')
-        try:
-            dados_validados = schema_update.load(api.payload)
-            cursos[id_curso].update(dados_validados)
-            return cursos[id_curso], 200
-        except ValidationError as e:
-            api.abort(400, str(e.messages))
-    
-    def delete(self, id_curso):
+        if curso_id not in cursos:
+            abort(404, message=f'Curso {curso_id} não encontrado')
+        cursos[curso_id].update(dados_atualizacao)
+        return cursos[curso_id]
+
+    @blp.response(204)
+    def delete(self, curso_id):
         """Deleta um curso"""
-        if id_curso not in cursos:
-            api.abort(404, f'Curso {id_curso} não encontrado')
-        del cursos[id_curso]
-        return '', 204
+        if curso_id not in cursos:
+            abort(404, message=f'Curso {curso_id} não encontrado')
+        del cursos[curso_id]
