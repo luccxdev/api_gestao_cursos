@@ -329,3 +329,107 @@ Para uma aplicação em produção, seria recomendado usar um banco de dados com
 ## Licença
 
 Este projeto é fornecido como atividade educacional da BFD - Bolsa Futuro Digital.
+
+
+## Arquitetura v2.0 - Blueprints, Schemas e OpenAPI
+
+Esta versão refatorada implementa boas práticas de desenvolvimento de APIs:
+
+### 1. **Blueprints (Modularização)**
+
+A API está organizada em **blueprints** do Flask-RESTX:
+
+```
+recursos/
+├── __init__.py
+└── curso.py      # Blueprint dos endpoints de cursos
+```
+
+Cada blueprint é um **Namespace** que organiza endpoints relacionados.
+
+### 2. **Schemas (Validação de Dados)**
+
+Usamos **Marshmallow** para validação de entrada e saída:
+
+```
+schemas/
+├── __init__.py
+└── curso.py      # CursoSchema e CursoSchemaUpdate
+```
+
+**Validations:**
+- `nome`: Obrigatório, string de 1-100 caracteres
+- `descricao`: Opcional, máximo 500 caracteres
+- `carga_horaria`: Obrigatório, inteiro > 0
+
+### 3. **OpenAPI/Swagger (Documentação)**
+
+A API implementa **OpenAPI 3.0** automáticamente:
+
+**Acessar documentação:**
+```
+http://localhost:5000/docs
+```
+
+**Recurso da OpenAPI:**
+- ✓ Documentação interativa em Swagger UI
+- ✓ Models e schemas definidos
+- ✓ Status HTTP e mensagens de erro documentados
+- ✓ Testes diretos da interface
+
+## Estrutura do Projeto
+
+```
+api_gestao_cursos/
+├── app.py                  # Main application
+├── db.py                   # In-memory database
+├── requirements.txt        # Dependencies
+├── README.md              # Documentation
+├── recursos/
+│   ├── __init__.py        # Blueprint package
+│   └── curso.py           # Curso endpoints (GET, POST, PUT, DELETE)
+└── schemas/
+    ├── __init__.py        # Schema package
+    └── curso.py           # CursoSchema & CursoSchemaUpdate
+```
+
+## Instalação e Execução
+
+### 1. Instalar dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Executar aplicativo
+
+```bash
+python app.py
+```
+
+A API estará disponível em `http://localhost:5000/api/v1`
+
+### 3. Acessar Swagger UI
+
+```
+http://localhost:5000/docs
+```
+
+## Dependencias
+
+- **Flask 3.0.0** - Framework web
+- **Flask-RESTX 0.5.1** - REST API com OpenAPI/Swagger
+- **Marshmallow 3.20.1** - Serialização e validação de dados
+- **Python-dotenv 1.0.0** - Variáveis de ambiente
+
+## Melhorias Implementadas
+
+### vs Versão Anterior
+
+| Aspecto | v1.0 | v2.0 |
+|--------|------|------|
+| Organização | Monolítica | Blueprints |
+| Validação | Nenhuma | Marshmallow |
+| Documentação | Manual | OpenAPI/Swagger |
+| Escalabilidade | Baixa | Alta |
+| Manutenção | Difícil | Fácil |
