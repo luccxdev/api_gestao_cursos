@@ -10,7 +10,7 @@ API REST desenvolvida com **Flask** para gestão de cursos com operações CRUD 
 .
 ├── app.py              # Aplicação principal
 ├── requirements.txt    # Dependências
-├── recursos/           # Recursos da API (flask-smorest)
+├──├── resource/           # Recursos da API (flask-smorest)
 │   ├── __init__.py
 │   └── curso.py        # Endpoints de cursos
 └── schemas/            # Validação de dados com Marshmallow
