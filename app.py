@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_smorest import Api
-from resource.curso import curso_blp
-
+from recursos.curso import curso_blp
 app = Flask(__name__)
 
 app.config["API_TITLE"] = "API Gestão de Cursos"
