@@ -1,8 +1,9 @@
 from flask import Flask
 from flask_smorest import Api
-from recursos.curso import curso_blp
-app = Flask(__name__)
+from resource.curso import blp as curso_blpapp = Flask(__name__)
 
+
+app.config["PROPAGATE_EXCEPTIONS"] = True
 app.config["API_TITLE"] = "API Gestão de Cursos"
 app.config["API_VERSION"] = "v1"
 app.config["OPENAPI_VERSION"] = "3.0.3"
@@ -13,6 +14,5 @@ app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-
 api = Api(app)
 
 api.register_blueprint(curso_blp)
-
 if __name__ == "__main__":
     app.run(debug=True)
