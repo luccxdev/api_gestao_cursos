@@ -1,1 +1,3 @@
 Flask==3.0.0
+flask-smorest==0.42.3
+marshmallow==3.20.1
