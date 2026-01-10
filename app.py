@@ -1,25 +1,19 @@
-from flask import Flask, jsonify, request
-from blueprints.curso import curso_bp
+from flask import Flask
+from flask_smorest import Api
+from resource.curso import curso_blp
 
 app = Flask(__name__)
 
-# Registrar blueprint
-app.register_blueprint(curso_bp)
+app.config["API_TITLE"] = "API Gestão de Cursos"
+app.config["API_VERSION"] = "v1"
+app.config["OPENAPI_VERSION"] = "3.0.3"
+app.config["OPENAPI_URL_PREFIX"] = "/"
+app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
+app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
-# Rota raiz para documentação
-@app.route('/', methods=['GET'])
-def documentacao():
-    return jsonify({
-        "titulo": "API de Gestão de Cursos",
-        "versao": "2.0",
-        "endpoints": {
-            "GET /cursos": "Listar todos os cursos",
-            "POST /cursos": "Criar novo curso",
-            "GET /cursos/<id>": "Obter curso por ID",
-            "PUT /cursos/<id>": "Atualizar curso",
-            "DELETE /cursos/<id>": "Deletar curso"
-        }
-    })
+api = Api(app)
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+api.register_blueprint(curso_blp)
+
+if __name__ == "__main__":
+    app.run(debug=True)
