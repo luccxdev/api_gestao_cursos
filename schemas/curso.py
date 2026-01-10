@@ -1,33 +1,27 @@
-from marshmallow import Schema, fields, validate
+# Schema para validação de dados
 
-class CursoSchema(Schema):
-    """Schema para validação de dados de Cursos"""
+def validar_curso(dados):
+    """
+    Valida os dados de um curso
+    Retorna (validado, erros)
+    """
+    erros = []
     
-    id = fields.Int(dump_only=True)
-    nome = fields.Str(
-        required=True,
-        validate=validate.Length(min=1, max=100),
-        error_messages={
-            'required': 'O campo nome é obrigatório',
-            'invalid': 'O nome deve ser uma string'
-        }
-    )
-    descricao = fields.Str(
-        allow_none=True,
-        validate=validate.Length(max=500)
-    )
-    carga_horaria = fields.Int(
-        required=True,
-        validate=validate.Range(min=1),
-        error_messages={
-            'required': 'A carga horária é obrigatória',
-            'invalid': 'A carga horária deve ser um número inteiro'
-        }
-    )
+    # Validar nome
+    if 'nome' not in dados:
+        erros.append('Nome é obrigatório')
+    elif not isinstance(dados['nome'], str) or len(dados['nome']) == 0:
+        erros.append('Nome deve ser uma string não vazia')
     
-class CursoSchemaUpdate(Schema):
-    """Schema para atualização de cursos"""
+    # Validar descricao (opcional)
+    if 'descricao' in dados:
+        if not isinstance(dados['descricao'], str):
+            erros.append('Descrição deve ser uma string')
     
-    nome = fields.Str(validate=validate.Length(min=1, max=100))
-    descricao = fields.Str(allow_none=True, validate=validate.Length(max=500))
-    carga_horaria = fields.Int(validate=validate.Range(min=1))
+    # Validar carga_horaria
+    if 'carga_horaria' not in dados:
+        erros.append('Carga horária é obrigatória')
+    elif not isinstance(dados['carga_horaria'], int) or dados['carga_horaria'] <= 0:
+        erros.append('Carga horária deve ser um número inteiro positivo')
+    
+    return len(erros) == 0, erros
