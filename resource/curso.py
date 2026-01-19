@@ -65,6 +65,14 @@ class CursoResource(MethodView):
         ):
             abort(409, message="Já existe outro curso com esse nome.")
 
+                # Validar se o professor_id existe (se foi fornecido)
+                if "professor_id" in data:
+                                from models import ProfessorModel
+                                professor = ProfessorModel.query.get(data["professor_id"])
+                                if not professor:
+                                                    abort(404, message="Professor não encontrado.")
+                                                curso.professor_id = data["professor_id"]
+
         curso.nome = data["nome"]
         curso.carga_horaria = data["carga_horaria"]
 
@@ -94,6 +102,14 @@ class CursoResource(MethodView):
 
         if "carga_horaria" in data:
             curso.carga_horaria = data["carga_horaria"]
+
+                # Validar se o professor_id existe (se foi fornecido)
+                if "professor_id" in data:
+                                from models import ProfessorModel
+                                professor = ProfessorModel.query.get(data["professor_id"])
+                                if not professor:
+                                                    abort(404, message="Professor não encontrado.")
+                                                curso.professor_id = data["professor_id"]
 
         try:
             db.session.add(curso)
