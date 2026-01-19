@@ -22,6 +22,12 @@ class CursosResource(MethodView):
         if CursoModel.query.filter_by(nome=data["nome"]).first():
             abort(409, message="Curso com esse nome já existe.")
 
+                # Validar se o professor_id existe
+        from models import ProfessorModel
+        professor = ProfessorModel.query.get(data["professor_id"])
+        if not professor:
+            abort(404, message="Professor não encontrado.")
+
         curso = CursoModel(**data)
 
         try:
