@@ -3,6 +3,7 @@ from flask_smorest import Api
 
 from db import db
 from resource.curso import blp as CursoBlueprint
+from resource.professor import blp as ProfessorBlueprint
 
 
 def create_app():
@@ -22,6 +23,7 @@ def create_app():
 
     api = Api(app)
     api.register_blueprint(CursoBlueprint)
+        api.register_blueprint(ProfessorBlueprint)
 
     @app.route("/")
     def index():
